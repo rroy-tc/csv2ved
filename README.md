@@ -26,7 +26,6 @@ Generating encryption key
 -------------------------
 
 Production public keys are stored under csv2ved/gpg_keys directory and are imported into gpg keyring on the machine running the script.
-Two keys are expected to exist for recipient email addresses: `<ops@tucowsw.com>, <augmented_service@tucows.com>`
 
 If you need to generate your own keys (i.e. to test decryption of the encrypted file generated) you will need to overwrite one of these keys:
 
