@@ -1,0 +1,2 @@
+member_id,balance,city,state,country,tier,years_member,membership_date,last_activity,active,rating,friends
+string,integer,string,string,string,string,integer,date,datetime,boolean,float,json

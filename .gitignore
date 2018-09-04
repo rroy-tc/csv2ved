@@ -1,0 +1,13 @@
+*.pyc
+venv.tmp/*
+.cache/*
+build/
+dist/
+csv2ved.egg-info/
+csv2ved/gpghome/random_seed
+
+#pycharm files
+.idea/*
+
+#OSX
+.DS_Store

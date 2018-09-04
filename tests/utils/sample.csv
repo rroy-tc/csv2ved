@@ -1,0 +1,2 @@
+member_id,balance,city,state,country,tier,years_member,membership_date,last_activity,active,rating,friends
+,25000,Atlantic City,NJ,US,GOLD,5,2013-01-01,2018-01-31T12:13:14,True,0.95,{"member_id": "123"}
