@@ -126,11 +126,11 @@ class TestMakeJson(object):
         "2017-10-21T12:13:14",
         '{"foo":"bar"}'
     ]
-    lp_id = str(uuid.uuid4())
+    company_id = str(uuid.uuid4())
 
     def test_function_returns_json_if_validation_passes(self):
         expected_result = {
-            "_id": "{}_12345".format(self.lp_id),
+            "_id": "{}_12345".format(self.company_id),
             "augmentedData": {
                 "name": "John",
                 "MEMBER_ID": "12345",
@@ -145,7 +145,7 @@ class TestMakeJson(object):
             }
         }
         json_result, error = csv2jpl_converter.make_json(
-            self.headers, self.csv_types, self.data, self.lp_id, self.member_id_column)
+            self.headers, self.csv_types, self.data, self.company_id, self.member_id_column)
         assert json.loads(json_result) == expected_result
         assert error == ""
 
@@ -153,7 +153,7 @@ class TestMakeJson(object):
         data = copy.deepcopy(self.data)
         data[6] = ""
         expected_result = {
-            "_id": "{}_12345".format(self.lp_id),
+            "_id": "{}_12345".format(self.company_id),
             "augmentedData": {
                 "name": "John",
                 "MEMBER_ID": "12345",
@@ -167,7 +167,7 @@ class TestMakeJson(object):
             }
         }
         json_result, error = csv2jpl_converter.make_json(
-            self.headers, self.csv_types, data, self.lp_id, self.member_id_column)
+            self.headers, self.csv_types, data, self.company_id, self.member_id_column)
         assert json.loads(json_result) == expected_result
         assert error == ""
 
@@ -176,27 +176,27 @@ class TestMakeJson(object):
         data[0] = ""
         expected_result = (False, "MEMBER_ID cannot be empty")
         assert csv2jpl_converter.make_json(
-            self.headers, self.csv_types, data, self.lp_id, self.member_id_column) == expected_result
+            self.headers, self.csv_types, data, self.company_id, self.member_id_column) == expected_result
 
     def test_function_returns_error_if_headers_and_data_have_different_length(self):
         corrupted_data = copy.deepcopy(self.data)
         corrupted_data.append("foo")
         expected_result = (False, "Data length does not match headers")
         assert csv2jpl_converter.make_json(
-            self.headers, self.csv_types, corrupted_data, self.lp_id, self.member_id_column) == expected_result
+            self.headers, self.csv_types, corrupted_data, self.company_id, self.member_id_column) == expected_result
 
     def test_function_returns_error_if_data_validation_fails(self):
         corrupted_data = corrupted_data = copy.deepcopy(self.data)
         corrupted_data[7] = "one thousand points"
         expected_result = (False, "one thousand points is not a valid json")
         assert csv2jpl_converter.make_json(
-            self.headers, self.csv_types, corrupted_data, self.lp_id, self.member_id_column) == expected_result
+            self.headers, self.csv_types, corrupted_data, self.company_id, self.member_id_column) == expected_result
 
     @mock.patch('csv2ved.csv2json_type_converter.ConvertCsvDataToJson.convert', side_effect=ValueError)
     def test_function_returns_error_if_data_conversion_fails(self, mock_csv2json_convert):
         expected_result = (False, "Cannot convert 'MEMBER_ID' value '12345' to 'string'")
         assert csv2jpl_converter.make_json(
-            self.headers, self.csv_types, self.data, self.lp_id, self.member_id_column) == expected_result
+            self.headers, self.csv_types, self.data, self.company_id, self.member_id_column) == expected_result
 
 
 class TestGenerateOutputFileName(object):
@@ -256,8 +256,8 @@ class TestConverter(object):
         data_file = io.StringIO('MEMBER_ID,name,balance\n12345,John,100')
         data_file.name = ""
         type_file = io.StringIO('MEMBER_ID,name,balance\nstring,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id)
         assert ("/path/to/myfile_XYZ.jpl", 1, []) == result
 
     @mock.patch('builtins.open', return_value=io.StringIO())
@@ -266,8 +266,8 @@ class TestConverter(object):
         data_file = io.StringIO('MEMBER_ID,name,balance\n\n12345,John,100\n\n')
         data_file.name = ""
         type_file = io.StringIO('MEMBER_ID,name,balance\nstring,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id)
         assert ("/path/to/myfile_XYZ.jpl", 1, []) == result
 
     @mock.patch('os.remove')
@@ -277,8 +277,8 @@ class TestConverter(object):
         data_file = io.StringIO('MEMBER_ID,name,balance\n12345,John\n12345,Jane,1000')
         data_file.name = ""
         type_file = io.StringIO('MEMBER_ID,name,balance\nstring,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id)
         assert ("/path/to/myfile_XYZ.jpl", 1, [{2: 'Data length does not match headers'}]) == result
 
     @mock.patch('os.remove')
@@ -288,8 +288,8 @@ class TestConverter(object):
         data_file = io.StringIO('MEMBER_ID,name,balance')
         data_file.name = "/path/to/myfile.csv"
         type_file = io.StringIO('MEMBER_ID,name,balance\nstring,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id)
         assert ("/path/to/myfile_XYZ.jpl", 0, [{1: "/path/to/myfile.csv doesn't have data lines"}]) == result
 
     @mock.patch('os.remove')
@@ -299,8 +299,8 @@ class TestConverter(object):
         data_file = io.StringIO('MEMBER_ID,name,balance\n\n\n\n\n')
         data_file.name = "/path/to/myfile.csv"
         type_file = io.StringIO('MEMBER_ID,name,balance\nstring,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id)
         assert ("/path/to/myfile_XYZ.jpl", 0, [{1: "/path/to/myfile.csv doesn't have data lines"}]) == result
 
     @mock.patch('os.remove')
@@ -310,8 +310,8 @@ class TestConverter(object):
         data_file = io.StringIO('')
         data_file.name = "/path/to/myfile.csv"
         type_file = io.StringIO('MEMBER_ID,name,balance\nstring,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id)
         assert ("/path/to/myfile_XYZ.jpl", 0, [{0: "/path/to/myfile.csv is empty"}]) == result
 
     @mock.patch('os.remove')
@@ -319,8 +319,8 @@ class TestConverter(object):
     def test_converter_stops_if_type_file_is_empty(self, mock_open, mock_remove):
         data_file = io.StringIO('MEMBER_ID,name,balance\n12345,John\n12345,Jane,1000')
         type_file = io.StringIO('')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id)
         assert ("", 0, [{0: 'Type file is invalid or empty'}]) == result
 
     @mock.patch('os.remove')
@@ -330,8 +330,8 @@ class TestConverter(object):
         data_file = io.StringIO('MEMBER_ID,name,balance\n64583,Sally\n33445,Peter,1000,200\n10101,Phil')
         data_file.name = ""
         type_file = io.StringIO('MEMBER_ID,name,balance\nstring,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id, 2)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id, 2)
         expected_errors = [{2: 'Data length does not match headers'}, {3: 'Data length does not match headers'}]
         assert ("/path/to/myfile_XYZ.jpl", 0, expected_errors) == result
 
@@ -343,6 +343,6 @@ class TestConverter(object):
         data_file = io.StringIO('MEMBER_ID,name,balance\n64583,Sally\n33445,Peter,1000,200\n10101,Phil')
         data_file.name = ""
         type_file = io.StringIO('MEMBER_ID,name,balance\nint,string,integer')
-        lp_id = str(uuid.uuid4())
-        result = csv2jpl_converter.convert(data_file, type_file, lp_id, 2)
+        company_id = str(uuid.uuid4())
+        result = csv2jpl_converter.convert(data_file, type_file, company_id, 2)
         assert ("", 0, [{1: "'MEMBER_ID' type must be string"}]) == result

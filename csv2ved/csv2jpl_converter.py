@@ -19,7 +19,7 @@ def csv_file_iterator(csv_file):
             yield [value.strip() for value in line]
 
 
-def make_json(csv_headers, csv_types, data, loyalty_program_id, member_id_name):
+def make_json(csv_headers, csv_types, data, company_id, member_id_name):
     if len(csv_headers) != len(data):
         return False, "Data length does not match headers"
 
@@ -37,7 +37,7 @@ def make_json(csv_headers, csv_types, data, loyalty_program_id, member_id_name):
         except ValueError:
             return False, "Cannot convert '{}' value '{}' to '{}'".format(name, value, csv_types[name])
 
-    _id = "{}_{}".format(loyalty_program_id, augmented_data[member_id_name])
+    _id = "{}_{}".format(company_id, augmented_data[member_id_name])
     augmented_dict = {
         "_id": _id,
         "augmentedData": augmented_data
@@ -86,7 +86,7 @@ def get_member_id_name(csv_types):
     return None
 
 
-def convert(data_file, type_file, loyalty_program_id, max_number_of_errors=100):
+def convert(data_file, type_file, company_id, max_number_of_errors=100):
 
     current_line = 0
     number_of_written_lines = 0
@@ -122,7 +122,7 @@ def convert(data_file, type_file, loyalty_program_id, max_number_of_errors=100):
                 continue
             if line == []:
                 continue
-            json_line, error = make_json(csv_headers, csv_types, line, loyalty_program_id, member_id_name)
+            json_line, error = make_json(csv_headers, csv_types, line, company_id, member_id_name)
             if json_line:
                 output_file.write("{}\n".format(json_line))
                 number_of_written_lines += 1

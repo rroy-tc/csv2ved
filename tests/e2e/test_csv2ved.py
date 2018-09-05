@@ -16,8 +16,8 @@ MISSING_FILE = os.path.join(temp_log_dir, 'foo.bar')
 EXPECTED_OUTPUT_JPL_FILE = os.path.join(temp_log_dir, 'data_{}.jpl'.format(current_time.strftime('%Y%m%d%H%M%S')))
 EXPECTED_OUTPUT_VAD_FILE = os.path.join(temp_log_dir, 'data_{}.vad'.format(current_time.strftime('%Y%m%d%H%M%S')))
 EXPECTED_OUTPUT_VED_FILE = os.path.join(temp_log_dir, 'data_{}.ved'.format(current_time.strftime('%Y%m%d%H%M%S')))
-LOYALTY_PROGRAM_ID = str(uuid.uuid4())
-INVALID_LOYALTY_PROGRAM_ID = 'lp_id'
+COMPANY_ID = str(uuid.uuid4())
+INVALID_COMPANY_ID = 'company_id'
 
 
 def overwrite_test_file_content(filename, content):
@@ -43,7 +43,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id', COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None
@@ -60,7 +60,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id', COMPANY_ID,
                                    '--prod', False,
                                    '--no-input'
                                ])
@@ -79,7 +79,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id', COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None
@@ -97,7 +97,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id', COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None
@@ -113,7 +113,7 @@ class TestCsv2Ved(object):
         assert result.exit_code == 2
         assert 'Usage: csv2ved [OPTIONS]' in result.output
 
-    def test_script_returns_error_when_lp_parameter_is_missing(self):
+    def test_script_returns_error_when_company_parameter_is_missing(self):
         runner = click_testing.CliRunner()
         result = runner.invoke(csv2ved.csv2ved,
                                [
@@ -123,20 +123,20 @@ class TestCsv2Ved(object):
                                ])
         assert result is not None
         assert result.exit_code == 2
-        assert 'Error: Missing option "--loyalty-program-id"' in result.output
+        assert 'Error: Missing option "--company-id"' in result.output
 
-    def test_script_returns_error_when_lp_parameter_is_not_guid(self):
+    def test_script_returns_error_when_company_parameter_is_not_guid(self):
         runner = click_testing.CliRunner()
         result = runner.invoke(csv2ved.csv2ved,
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', INVALID_LOYALTY_PROGRAM_ID,
+                                   '--company-id', INVALID_COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None
         assert result.exit_code == 2
-        assert 'Invalid format for loyalty program ID parameter, aborting' in result.output
+        assert 'Invalid format for company ID parameter, aborting' in result.output
 
     def test_script_returns_error_when_file_path_is_incorrect(self):
         runner = click_testing.CliRunner()
@@ -144,7 +144,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', MISSING_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id', COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None
@@ -161,7 +161,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id', COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None
@@ -177,7 +177,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id',COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None
@@ -193,7 +193,7 @@ class TestCsv2Ved(object):
                                [
                                    '--data-file', DATA_FILE,
                                    '--type-file', TYPE_FILE,
-                                   '--loyalty-program-id', LOYALTY_PROGRAM_ID,
+                                   '--company-id', COMPANY_ID,
                                    '--no-input'
                                ])
         assert result is not None

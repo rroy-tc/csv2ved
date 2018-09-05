@@ -29,16 +29,16 @@ def _handle_input_prompt(options):
             sys.exit('Aborting.')
 
 
-def validate_lp_cmd_line_parameter(lp_id):
+def validate_company_cmd_line_parameter(company_id):
     try:
-        UUID(lp_id, version=4)
+        UUID(company_id, version=4)
     except ValueError:
         return False
     return True
 
 
 @click.command()
-@click.option('--loyalty-program-id', 'lp_id', required=True, type=str, help='loyalty program ID')
+@click.option('--company-id', 'company_id', required=True, type=str, help='Company ID')
 @click.option('--data-file', 'data_file', required=True, type=click.File('r'), help='path to partner data file in '
                                                                                     'csv format')
 @click.option('--type-file', 'type_file', required=True, type=click.File('r'), help='path to data type file in '
@@ -49,8 +49,8 @@ def validate_lp_cmd_line_parameter(lp_id):
 def csv2ved(**opts):
     _handle_input_prompt(opts)
 
-    if not validate_lp_cmd_line_parameter(opts['lp_id']):
-        click.secho('Invalid format for loyalty program ID parameter, aborting', color='red')
+    if not validate_company_cmd_line_parameter(opts['company_id']):
+        click.secho('Invalid format for company ID parameter, aborting', color='red')
         sys.exit(2)
 
     gpg_recipients = vad2ved_converter.GPG_PRODUCTION_RECIPIENTS
@@ -68,7 +68,7 @@ def csv2ved(**opts):
         click.secho(init_error, color='red')
         sys.exit(2)
 
-    jpl_file_name, lines, errors = csv2jpl_converter.convert(opts['data_file'], opts['type_file'], opts['lp_id'])
+    jpl_file_name, lines, errors = csv2jpl_converter.convert(opts['data_file'], opts['type_file'], opts['company_id'])
     if errors:
         click.secho('Errors: ')
         for error in errors:
